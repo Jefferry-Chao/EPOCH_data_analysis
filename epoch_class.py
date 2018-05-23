@@ -210,21 +210,25 @@ class epoch_class(object):
             array = array - g_field
         return array
 #get cordinate
-    def get_axis(self,data_dict,axes='x'):
+    def get_axis(self, data_dict, axes='x', dimen='2d'):
         '''
         This function is used to get 'x', 'y' cordinate.
         parameters:
         data_dict---data dictionary.
         axes--------axes, 'x' or 'y', default:'x'
+        dimen-------dimensions.
         '''
         import numpy as np
         grid = data_dict["Grid_Grid_mid"]
         dimens = grid.dims
         extent = grid.extents
-        if(axes == 'x'):
-            axis = np.linspace(extent[0],extent[2],dimens[0])
-        else:
-            axis = np.linspace(extent[1],extent[3],dimens[1])
+        if (dimen == '2d'):
+            if(axes == 'x'):
+                axis = np.linspace(extent[0],extent[2],dimens[0])
+            else:
+                axis = np.linspace(extent[1],extent[3],dimens[1])
+        elif (dimen == '1d'):
+            axis = np.linspace(extent[0], extent[1], dimens[0])
         return axis
 #get cordinate 3d
     def get_axis_3d(self,data_dict,axes='x'):
@@ -945,17 +949,23 @@ class epoch_class(object):
         field-------the field name. default:'Magnetic_Field_Bx'
         '''
         #from constants import laser_mr as const
-        from constants import proton_radiography as const
+        #from constants import proton_radiography as const
         #from constants import proton_benchmark as const
+        from constants import bubble_expansion as const
         normal = {"magnetic":const.B0,"electric":const.E0,\
-                  "current":const.J0,"axis":const.di,\
+                  "current":const.J0,"axis":const.d0,\
                   "derived_j":const.J0,"density":const.n0,\
                   "temperature":const.T0}
         normal_s = normal.keys()
+        ifinkey = False
         for eachone in normal_s:
             if(eachone in field.lower()):
                 factor = normal[eachone]
+                ifinkey = True
                 break
+        if (ifinkey == False):
+            factor = 1.0
+            print 'Normalization constant not found, set 1.0 by default!'
         return factor
 #calculate magnetic field tensor force
     def tensor_force(self,filenumber,prefix='1',component=2):

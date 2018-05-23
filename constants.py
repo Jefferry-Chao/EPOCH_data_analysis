@@ -86,6 +86,7 @@ class laser_mr(object):
     #plasma
     nc = me*omega*omega*epsilon0/qe/qe
     n0 = 20*nc
+    d0 = la
     B0 = E0/c
     J0 = nc*qe*c
     P0 = me*c
@@ -126,6 +127,7 @@ class proton_radiography:
     ek = 2.0e6 * qe
     v0 = np.sqrt(2*ek/mi)
     r0 = mi*v0/qe/B0
+    d0 = di
 class proton_benchmark:
     '''
     define some constants in proton benchmark case.
@@ -156,3 +158,34 @@ class proton_benchmark:
     ek = 2.0e6 * qe
     v0 = np.sqrt(2*ek/mi)
     r0 = mi*v0/qe/B0
+    d0 = di
+class bubble_expansion:
+    '''
+    define some constants in bubble expansion case.
+    '''
+    import numpy as np
+    #constants
+    me = 9.11e-31
+    mass_ratio = 100
+    mi = mass_ratio*me
+    s = 4
+    c = 3e8
+    qe = 1.602e-19
+    qi = s * qe
+    pi = 3.1415926
+    epsilon0 = 8.854e-12
+    kb = 1.3806503e-23
+    mu0 = 4*pi*1e-7
+    n0 = 9.9787e28
+    te = 1200 * qe / kb
+    #length
+    wpe = np.sqrt(s*n0*qe*qe/epsilon0/me)
+    wpi = np.sqrt(n0*qi*qi/epsilon0/mi)
+    lde = np.sqrt(epsilon0*te*kb/s/n0/qe/qe)
+    di = c/wpi
+    #dimensionless
+    B0 = 100
+    E0 = c * B0
+    J0 = qe * s * n0 * c
+    T0 = me * c * c
+    d0 = lde

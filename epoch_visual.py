@@ -159,7 +159,7 @@ class epoch_visual(object):
                     plt.clf()
         #return narray
 #line plot
-    def plot_line(self,filenumber=0,info='dissipation_3d',field='bz',display=True,factor=1.0,axis='x',index=260,axis2='y',index2=0, prefix='1',lim=[-1,1],arti_v=False,nspe=3):
+    def plot_line(self,filenumber=0,info='dissipation_3d',field='bz',display=True,factor=1.0,axis='x',index=260,axis2='y',index2=0, prefix='1',lim=[-1,1],arti_v=False,nspe=3, figure_size=(10, 5)):
         '''
         This function is used to plot line.
         parameters:
@@ -202,6 +202,9 @@ class epoch_visual(object):
                 if(each != axis):
                     axes = each
             x_axis = sc.get_axis(data_dict,axes=axes)
+        elif (dimen == '1d'):
+            axes = axis
+            x_axis = sc.get_axis(data_dict, dimen=dimen)
         else:
             pass
         #get array
@@ -217,7 +220,7 @@ class epoch_visual(object):
                 constant = sc.get_constant_3d(field=field)
                 x0 = const.la
                 x_axis = x_axis/x0
-                #get array
+                # get array
                 for i in range(n):
                     data_dict = sc.get_data(namelist[i],prefix=prefix)
                     array = sc.get_array_3d(data_dict,field=field,axis=axis,index=index,axis2=axis2,index2=index2,dimen=1)
@@ -228,6 +231,21 @@ class epoch_visual(object):
                 title = field
             elif(dimen == '2d'):
                 pass
+            elif(dimen == '1d'):
+                from constants import bubble_expansion as const
+                field = sc.get_field(field=field,keys=keys)
+                constant = sc.get_constant_3d(field=field)
+                x0 = const.d0
+                x_axis = x_axis/x0
+                # get array
+                for i in range(n):
+                    data_dict = sc.get_data(namelist[i],prefix=prefix)
+                    array = data_dict[field].data
+                    narray.append(array/constant)
+                    legend = legend + ['t = ' + str(namelist[i]) + '$ T_0 $']
+                #others
+                label = sc.select_label(case='others', axis=axes, dimen=1)
+                title = field
             else:
                 pass
         #find max
@@ -239,7 +257,7 @@ class epoch_visual(object):
             vmax = lim[1]
             vmin = lim[0]
         #plot all the figure
-        plt.figure(figsize=(10,5))
+        plt.figure(figsize=figure_size)
         for i in range(n):
             plt.plot(x_axis,narray[i],color_set[i],label=legend[i])
         #add label
